@@ -1,11 +1,3 @@
-// CREATE TABLE sessions (
-//   id SERIAL PRIMARY KEY,
-//   user_id INT REFERENCES users(id) ON DELETE CASCADE,
-//   token TEXT UNIQUE NOT NULL,
-//   expires_at TIMESTAMP NOT NULL,
-//   created_at TIMESTAMP DEFAULT NOW()
-// );
-
 // CREATE TABLE users (
 //   id SERIAL PRIMARY KEY,
 //   username TEXT UNIQUE NOT NULL,
