@@ -5,6 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Fingerprint } from "lucide-react";
 import { useEffect, useState } from "react";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
+import Link from "next/link";
 
 function formatRhythm(rhythm) {
 	const meanings = {
@@ -23,6 +32,8 @@ export default function SignUpUserInput() {
 	const [rhythm, setRhythm] = useState("");
 	const [pressed, setPressed] = useState(false);
 	const [lastAction, setLastAction] = useState(0); // time since last action
+	const [isOpen, setIsOpen] = useState(false);
+	const [error, setError] = useState(null);
 
 	useEffect(() => {
 		if (pressed) {
@@ -45,6 +56,7 @@ export default function SignUpUserInput() {
 	}, [pressed]);
 
 	function submitSignup() {
+		console.log("Submitting signup");
 		fetch("/api/signup", {
 			method: "POST",
 			headers: {
@@ -54,11 +66,19 @@ export default function SignUpUserInput() {
 				username,
 				rhythm,
 			}),
+			credentials: "include",
 		}).then(async (res) => {
 			if (res.ok) {
-				console.log("Signup successful");
+				const data = await res.json();
+				if (data.success) {
+					setIsOpen(true);
+				} else {
+					setError(data.error);
+				}
 			} else {
 				console.error("Signup failed");
+				const data = await res.json();
+				setError(data.error);
 			}
 		});
 	}
@@ -145,18 +165,46 @@ export default function SignUpUserInput() {
 	}
 
 	return (
-		<div>
-			<Label htmlFor="username">Username:</Label>
-			<Input
-				type="text"
-				id="username"
-				name="username"
-				required
-				value={username}
-				onChange={(e) => setUsername(e.target.value)}
-			/>
+		<>
+			<div>
+				<Label htmlFor="username">Username:</Label>
+				<Input
+					type="text"
+					id="username"
+					name="username"
+					required
+					value={username}
+					onChange={(e) => setUsername(e.target.value)}
+				/>
 
-			<RhythmTapSpace />
-		</div>
+				<RhythmTapSpace />
+			</div>
+			<Dialog open={isOpen} onOpenChange={setIsOpen}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Successfully signed up</DialogTitle>
+						<DialogDescription>
+							Thank you for signing up! You can now log in and
+							start using the app.
+							<Button
+								onClick={() => setIsOpen(false)}
+								asChild
+								className={"mt-1"}
+							>
+								<Link href="/signin">Go to login</Link>
+							</Button>
+						</DialogDescription>
+					</DialogHeader>
+				</DialogContent>
+			</Dialog>
+			<Dialog open={error} onOpenChange={setError}>
+				<DialogContent className={"bg-red-500/10 backdrop-blur-3xl"}>
+					<DialogHeader>
+						<DialogTitle>Error signing up</DialogTitle>
+						<DialogDescription>{error}</DialogDescription>
+					</DialogHeader>
+				</DialogContent>
+			</Dialog>
+		</>
 	);
 }
