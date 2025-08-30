@@ -1,16 +1,19 @@
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { jwtVerify } from "jose";
 
-const SECRET = process.env.JWT_SECRET;
+const SECRET = new TextEncoder().encode(process.env.JWT_SECRET); // ✅ encode to Uint8Array
 
-export function middleware(req) {
+export async function middleware(req) {
 	const token = req.cookies.get("auth")?.value;
-	if (!token) return NextResponse.redirect(new URL("/signin", req.url));
+	if (!token) {
+		console.log("no token");
+		return NextResponse.redirect(new URL("/signin", req.url));
+	}
 
 	try {
-		jwt.verify(token, SECRET);
+		var decoded = await jwtVerify(token, SECRET);
 		return NextResponse.next();
-	} catch {
+	} catch (err) {
 		return NextResponse.redirect(new URL("/signin", req.url));
 	}
 }

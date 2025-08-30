@@ -9,6 +9,8 @@ const SECRET = process.env.JWT_SECRET;
 export async function POST(req) {
 	const { username, rhythm } = await req.json();
 
+	const cookiesObj = await cookies();
+
 	const { rows } = await pool.query(
 		"SELECT * FROM users WHERE username = $1",
 		[username]
@@ -25,7 +27,7 @@ export async function POST(req) {
 	const token = jwt.sign({ userId: user.id }, SECRET, { expiresIn: "1h" });
 
 	// set cookie
-	cookies().set("auth", token, { httpOnly: true, secure: true });
+	cookiesObj.set("auth", token, { httpOnly: true, secure: true });
 
 	return NextResponse.json({ success: true });
 }
