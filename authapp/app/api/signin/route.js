@@ -23,10 +23,8 @@ export async function POST(req) {
 	if (!valid)
 		return NextResponse.json({ error: "Invalid rhythm" }, { status: 401 });
 
-	// create a jwt
 	const token = jwt.sign({ userId: user.id }, SECRET, { expiresIn: "1h" });
 
-	// set cookie
 	cookiesObj.set("auth", token, { httpOnly: true, secure: true });
 
 	return NextResponse.json({ success: true });

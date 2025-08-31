@@ -35,6 +35,12 @@ export default function Home() {
 					<Link href="/app">Get Started</Link>
 				</Button>
 			</div>
+			<div className="mx-auto w-fit flex flex-col items-center justify-center mt-8 p-4 border-2 border-muted-foreground rounded-lg">
+				<p>Already have an account?</p>
+				<Button variant="outline" className="mt-4" asChild>
+					<Link href="/signin">Sign in</Link>
+				</Button>
+			</div>
 		</>
 	);
 }

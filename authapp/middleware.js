@@ -6,7 +6,6 @@ const SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 export async function middleware(req) {
 	const token = req.cookies.get("auth")?.value;
 	if (!token) {
-		console.log("no token");
 		return NextResponse.redirect(new URL("/signin", req.url));
 	}
 

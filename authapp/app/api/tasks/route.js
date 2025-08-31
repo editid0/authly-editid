@@ -23,7 +23,6 @@ export async function POST(req) {
 		);
 	}
 	const userId = payload.userId;
-	console.log("Creating task for user ID:", userId, "with title:", title);
 	await pool.query(
 		"INSERT INTO tasks (title, user_id, description) VALUES ($1, $2, $3)",
 		[title, userId, description]
@@ -42,7 +41,6 @@ export async function DELETE(req) {
 	var payload;
 	try {
 		payload = jwt.verify(auth, process.env.JWT_SECRET);
-		console.log("Verified JWT payload:", payload);
 	} catch (err) {
 		cookieStore.delete("auth");
 		return NextResponse.json(
@@ -51,7 +49,6 @@ export async function DELETE(req) {
 		);
 	}
 	const userId = payload.userId;
-	console.log("Deleting task for user ID:", userId, "with ID:", id);
 	await pool.query("DELETE FROM tasks WHERE id = $1 AND user_id = $2", [
 		id,
 		userId,

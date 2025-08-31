@@ -14,7 +14,6 @@ export async function POST(req) {
 	var payload;
 	try {
 		payload = jwt.verify(auth, process.env.JWT_SECRET);
-		console.log("Verified JWT payload:", payload);
 	} catch (err) {
 		cookieStore.delete("auth");
 		return NextResponse.json(

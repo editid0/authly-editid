@@ -2,6 +2,7 @@
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
+import moment from "moment/moment";
 
 export default function TasksList({ tasks }) {
 	const [taskList, setTaskList] = useState(tasks);
@@ -81,6 +82,12 @@ export default function TasksList({ tasks }) {
 								}
 							>
 								{task.description}
+							</p>
+							<p className="text-sm text-muted-foreground/80">
+								Created:{" "}
+								{moment(task.created_at).format(
+									"MMMM Do YYYY, h:mm:ss a"
+								)}
 							</p>
 						</div>
 						<div className="right-0 ml-auto">
