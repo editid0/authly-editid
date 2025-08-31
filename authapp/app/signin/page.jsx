@@ -1,3 +1,4 @@
+import Link from "next/link";
 import SignInUserInput from "./UserInput";
 
 export default function SignInPage() {
@@ -7,6 +8,15 @@ export default function SignInPage() {
 				<h1 className="text-muted-foreground text-center text-2xl">
 					Sign In
 				</h1>
+				<div className="flex flex-row gap-1 text-muted-foreground">
+					<p>Don't have an account?</p>
+					<Link
+						href="/signup"
+						className="font-semibold hover:underline"
+					>
+						Sign Up
+					</Link>
+				</div>
 				<SignInUserInput />
 			</div>
 		</div>

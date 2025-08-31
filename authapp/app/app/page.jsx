@@ -2,9 +2,19 @@ import { Button } from "@/components/ui/button";
 import TasksList from "./Tasks";
 import { pool } from "@/lib/db";
 import AddTask from "./AddTask";
+import { cookies } from "next/headers";
+import jwt from "jsonwebtoken";
 
 export default async function ProtectedPage() {
-	const tasks_raw = await pool.query("SELECT * FROM tasks");
+	const cookieObj = await cookies();
+	const auth = cookieObj.get("auth")?.value;
+	const decoded = jwt.verify(auth, process.env.JWT_SECRET);
+	const userId = decoded.userId;
+
+	const tasks_raw = await pool.query(
+		"SELECT * FROM tasks WHERE user_id = $1",
+		[userId]
+	);
 	const tasks = tasks_raw.rows;
 
 	return (
