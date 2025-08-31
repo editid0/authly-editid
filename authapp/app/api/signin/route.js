@@ -53,7 +53,7 @@ export async function POST(req) {
 			secure: isProd, // allow over HTTP in dev
 			sameSite: "lax",
 			path: "/",
-			maxAge: 60 * 60 * 1000, // 1 hour
+			maxAge: 60 * 60, // 1 hour
 		});
 
 		return NextResponse.json({ success: true });
