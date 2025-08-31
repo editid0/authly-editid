@@ -30,3 +30,31 @@ export async function POST(req) {
 	);
 	return NextResponse.json({ success: true });
 }
+
+export async function DELETE(req) {
+	const cookieStore = await cookies();
+	const auth = cookieStore.get("auth")?.value;
+	const { id } = await req.json();
+
+	if (!auth) {
+		return NextResponse.json({ error: "No auth token" }, { status: 401 });
+	}
+	var payload;
+	try {
+		payload = jwt.verify(auth, process.env.JWT_SECRET);
+		console.log("Verified JWT payload:", payload);
+	} catch (err) {
+		cookieStore.delete("auth");
+		return NextResponse.json(
+			{ authenticated: false, error: "invalid_token" },
+			{ status: 401 }
+		);
+	}
+	const userId = payload.userId;
+	console.log("Deleting task for user ID:", userId, "with ID:", id);
+	await pool.query("DELETE FROM tasks WHERE id = $1 AND user_id = $2", [
+		id,
+		userId,
+	]);
+	return NextResponse.json({ success: true });
+}

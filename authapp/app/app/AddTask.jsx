@@ -30,6 +30,8 @@ export default function AddTask() {
 				setOpen(false);
 				setTitle("");
 				setDescription("");
+				// refresh task list
+				window.location.reload();
 			}
 		});
 	}

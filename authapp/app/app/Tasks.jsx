@@ -7,7 +7,6 @@ export default function TasksList({ tasks }) {
 	const [taskList, setTaskList] = useState(tasks);
 	const handleTaskClick = (id, checked = null) => {
 		const currentTask = taskList.find((task) => task.id === id);
-		console.log("Current task status:", currentTask.status);
 		const newStatus =
 			checked === null
 				? currentTask.status === "completed"
@@ -22,12 +21,29 @@ export default function TasksList({ tasks }) {
 				task.id === id ? { ...task, status: newStatus } : task
 			)
 		);
+		fetch("/api/tasks/checked", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ id, checked: newStatus === "completed" }),
+		});
+	};
+
+	const deleteTask = async (id) => {
+		setTaskList((prev) => prev.filter((task) => task.id !== id));
+		await fetch("/api/tasks", {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ id }),
+		});
 	};
 
 	return (
 		<>
-			<p>{JSON.stringify(taskList)}</p>
-			<div>
+			<div className="flex flex-col items-center justify-center gap-2 mt-2">
 				{taskList.map((task) => (
 					<div
 						key={task.id}
@@ -46,12 +62,34 @@ export default function TasksList({ tasks }) {
 							/>
 						</div>
 						<div>
-							<h3 className="text-lg font-semibold">
+							<h3
+								className={
+									"text-lg font-semibold " +
+									(task.status === "completed"
+										? "line-through"
+										: "")
+								}
+							>
 								{task.title}
 							</h3>
-							<p className="text-sm text-muted-foreground">
+							<p
+								className={
+									"text-sm text-muted-foreground " +
+									(task.status === "completed"
+										? "line-through"
+										: "")
+								}
+							>
 								{task.description}
 							</p>
+						</div>
+						<div className="right-0 ml-auto">
+							<button
+								className="bg-red-500 text-white rounded-lg px-4 py-2"
+								onClick={() => deleteTask(task.id)}
+							>
+								Delete
+							</button>
 						</div>
 					</div>
 				))}
