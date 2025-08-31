@@ -1,11 +1,29 @@
 "use client";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import moment from "moment/moment";
+import { Input } from "@/components/ui/input";
+import Fuse from "fuse.js";
 
 export default function TasksList({ tasks }) {
 	const [taskList, setTaskList] = useState(tasks);
+	const [searchTerm, setSearchTerm] = useState("");
+	const [displayedList, setDisplayedList] = useState(tasks);
+	const fuse = new Fuse(taskList, {
+		keys: ["title", "description"],
+		includeScore: true,
+	});
+
+	useEffect(() => {
+		if (searchTerm.trim() === "") {
+			setDisplayedList(taskList);
+		} else {
+			const results = fuse.search(searchTerm);
+			setDisplayedList(results.map((result) => result.item));
+		}
+	}, [searchTerm, taskList]);
+
 	const handleTaskClick = (id, checked = null) => {
 		const currentTask = taskList.find((task) => task.id === id);
 		const newStatus =
@@ -44,8 +62,14 @@ export default function TasksList({ tasks }) {
 
 	return (
 		<>
+			<Input
+				placeholder="Search..."
+				value={searchTerm}
+				onChange={(e) => setSearchTerm(e.target.value)}
+				className={"mt-2"}
+			/>
 			<div className="flex flex-col items-center justify-center gap-2 mt-2">
-				{taskList.map((task) => (
+				{displayedList.map((task) => (
 					<div
 						key={task.id}
 						className="border-2 border-muted-foreground/50 rounded-lg p-2 w-full flex flex-row items-center justify-start"

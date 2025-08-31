@@ -37,7 +37,11 @@ export default function AddTask() {
 	return (
 		<>
 			<Dialog open={open} onOpenChange={setOpen}>
-				<Button variant="outline" className="w-full" asChild>
+				<Button
+					variant="outline"
+					className="w-full cursor-pointer"
+					asChild
+				>
 					<DialogTrigger>Add Task</DialogTrigger>
 				</Button>
 				<DialogContent>
