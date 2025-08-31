@@ -5,6 +5,13 @@ import { useEffect, useState } from "react";
 import moment from "moment/moment";
 import { Input } from "@/components/ui/input";
 import Fuse from "fuse.js";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover"
+import { Button } from "@/components/ui/button";
+import { Clock3, ListOrdered } from "lucide-react";
 
 export default function TasksList({ tasks }) {
 	const [taskList, setTaskList] = useState(tasks);
@@ -107,15 +114,25 @@ export default function TasksList({ tasks }) {
 							>
 								{task.description}
 							</p>
-							<p className="text-sm text-muted-foreground/80">
-								Created:{" "}
-								{moment(task.created_at).format(
-									"MMMM Do YYYY, h:mm:ss a"
-								)}
-							</p>
-							<p className="text-sm text-muted-foreground/80">
-								Priority: {task.priority}
-							</p>
+							<Popover>
+								<Button variant="outline" onClick={(e) => { e.stopPropagation(); }} asChild>
+									<PopoverTrigger>
+										<span>Details</span>
+									</PopoverTrigger>
+								</Button>
+								<PopoverContent className="w-fit">
+									<div className="text-sm text-muted-foreground">
+										<div className="flex flex-row gap-1 items-center">
+											<Clock3 size={16} />
+											<p>Created: {moment(task.created_at).format("MMMM Do YYYY, h:mm:ss a")}</p>
+										</div>
+										<div className="flex flex-row gap-1 items-center">
+											<ListOrdered size={16} />
+											<p>Priority: {task.priority}</p>
+										</div>
+									</div>
+								</PopoverContent>
+							</Popover>
 						</div>
 						<div className="right-0 ml-auto">
 							<button
