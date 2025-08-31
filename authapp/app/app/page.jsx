@@ -23,10 +23,12 @@ export default async function ProtectedPage() {
 			<p className="text-center text-muted-foreground">
 				A relatively simple todo list, made for authly YSWS.
 			</p>
-			<div className="bg-muted m-2 p-2 w-full md:max-w-[15cm] mx-auto rounded-2xl border-2 border-muted-foreground">
-				<h1 className="text-2xl font-bold text-center">Your Tasks</h1>
-				<AddTask />
-				<TasksList tasks={tasks} />
+			<div className="px-2">
+				<div className="bg-muted m-2 p-2 w-full md:max-w-[15cm] mx-auto rounded-2xl border-2 border-muted-foreground">
+					<h1 className="text-2xl font-bold text-center">Your Tasks</h1>
+					<AddTask />
+					<TasksList tasks={tasks} />
+				</div>
 			</div>
 		</>
 	);

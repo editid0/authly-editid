@@ -4,6 +4,8 @@ import { pool } from "@/lib/db"; // a pg.pool object
 
 export async function POST(req) {
 	var { username, rhythm } = await req.json();
+	username = username.toLowerCase();
+	username = username.replace(/[^a-z0-9]/g, "");
 	rhythm = rhythm.replace(/[^TGL]/g, "");
 
 	if (!rhythm || rhythm.trim() === "") {
