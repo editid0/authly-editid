@@ -31,7 +31,7 @@ function SignInOutButton() {
 
 	return signedIn ? (
 		<Button asChild>
-			<Link href="/api/signout">Sign Out</Link>
+			<Link href="/api/signout" prefetch={false}>Sign Out</Link>
 		</Button>
 	) : (
 		<Button asChild>
