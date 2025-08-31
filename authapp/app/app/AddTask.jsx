@@ -41,6 +41,9 @@ export default function AddTask() {
 		if (isNaN(priority)) {
 			setPriority("");
 		} else {
+			if (priority) {
+				setPriority(String(Math.floor(Number(priority))));
+			}
 			if (Number(priority) > 5) {
 				setPriority("5");
 			}

@@ -30,30 +30,55 @@ function formatRhythm(rhythm) {
 export default function SignUpUserInput() {
 	const [username, setUsername] = useState("");
 	const [rhythm, setRhythm] = useState("");
-	const [pressed, setPressed] = useState(false);
-	const [lastAction, setLastAction] = useState(0); // time since last action
+	const [pressed, setPressed] = useState(false); // visual feedback state
+	const [lastAction, setLastAction] = useState(0); // timestamp of last tap
 	const [isOpen, setIsOpen] = useState(false);
 	const [error, setError] = useState(null);
 
+	// Register a single tap and append to rhythm based on time gap
+	function registerTap() {
+		const now = Date.now();
+		if (lastAction === 0) {
+			setRhythm("T");
+			setLastAction(now);
+			return;
+		}
+		const gap = now - lastAction;
+		if (gap < 250) {
+			setRhythm((prev) => prev + "T");
+		} else if (gap < 500) {
+			setRhythm((prev) => prev + "GT");
+		} else {
+			setRhythm((prev) => prev + "LT");
+		}
+		setLastAction(now);
+	}
+
+	// Global space bar listener (except when typing in username input)
 	useEffect(() => {
-		if (pressed) {
-			const now = Date.now();
-			if (lastAction === 0) {
-				setRhythm("T");
-				setLastAction(now);
-			} else {
-				var gap = now - lastAction;
-				if (gap < 250) {
-					setRhythm((prev) => prev + "T");
-				} else if (gap < 500) {
-					setRhythm((prev) => prev + "GT");
-				} else {
-					setRhythm((prev) => prev + "LT");
-				}
-				setLastAction(now);
+		function handleKeyDown(e) {
+			if (e.code === "Space" || e.key === " ") {
+				// Exclude username input only, as requested
+				if (e.target && e.target.id === "username") return;
+				if (e.repeat) return; // one tap per physical press
+				e.preventDefault();
+				setPressed(true);
+				registerTap();
 			}
 		}
-	}, [pressed]);
+		function handleKeyUp(e) {
+			if (e.code === "Space" || e.key === " ") {
+				if (e.target && e.target.id === "username") return;
+				setPressed(false);
+			}
+		}
+		window.addEventListener("keydown", handleKeyDown, { passive: false });
+		window.addEventListener("keyup", handleKeyUp, { passive: true });
+		return () => {
+			window.removeEventListener("keydown", handleKeyDown);
+			window.removeEventListener("keyup", handleKeyUp);
+		};
+	}, [lastAction]);
 
 	useEffect(() => {
 		if (rhythm.length > 30) {
@@ -108,33 +133,17 @@ export default function SignUpUserInput() {
 							onMouseDown={(e) => {
 								e.preventDefault();
 								setPressed(true);
+								registerTap();
 							}}
 							onMouseUp={() => setPressed(false)}
 							onMouseLeave={() => setPressed(false)}
 							onTouchStart={(e) => {
 								e.preventDefault();
 								setPressed(true);
+								registerTap();
 							}}
 							onTouchEnd={() => setPressed(false)}
-							onKeyDown={(e) => {
-								if (
-									e.key === " " ||
-									e.key === "Spacebar" ||
-									e.key === "Enter"
-								) {
-									e.preventDefault();
-									setPressed(true);
-								}
-							}}
-							onKeyUp={(e) => {
-								if (
-									e.key === " " ||
-									e.key === "Spacebar" ||
-									e.key === "Enter"
-								) {
-									setPressed(false);
-								}
-							}}
+							// Keyboard taps handled globally via space listener
 							className={
 								"w-full h-[3cm] p-2 border-muted-foreground rounded-xl border-2 flex items-center justify-center space-x-2 transition-colors duration-150 select-none"
 							}
@@ -153,6 +162,7 @@ export default function SignUpUserInput() {
 					);
 				})()}
 				<p>Current rhythm: {formatRhythm(rhythm) || "None"}</p>
+				<p className="text-sm text-muted-foreground">We recommend a memorable rhythm, as well as having at least 5 taps, but having more is better, up to 15 (roughly).</p>
 				<Button
 					onClick={() => {
 						setRhythm("");
@@ -186,7 +196,6 @@ export default function SignUpUserInput() {
 					value={username}
 					onChange={(e) => setUsername(e.target.value)}
 				/>
-
 				<RhythmTapSpace />
 			</div>
 			<Dialog open={isOpen} onOpenChange={setIsOpen}>

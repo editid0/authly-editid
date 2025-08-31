@@ -6,7 +6,7 @@ import { pool } from "@/lib/db";
 export async function POST(req) {
 	const cookieStore = await cookies();
 	const auth = cookieStore.get("auth")?.value;
-	const { title, description, priority } = await req.json();
+	var { title, description, priority } = await req.json();
 
 	if (!auth) {
 		return NextResponse.json({ error: "No auth token" }, { status: 401 });
@@ -14,7 +14,6 @@ export async function POST(req) {
 	var payload;
 	try {
 		payload = jwt.verify(auth, process.env.JWT_SECRET);
-		console.log("Verified JWT payload:", payload);
 	} catch (err) {
 		cookieStore.delete("auth");
 		return NextResponse.json(
@@ -34,6 +33,9 @@ export async function POST(req) {
 			{ error: "Title must be less than 255 characters" },
 			{ status: 400 }
 		);
+	}
+	if (!priority || priority.trim() === "") {
+		priority = 0;
 	}
 	if (isNaN(priority)) {
 		return NextResponse.json(

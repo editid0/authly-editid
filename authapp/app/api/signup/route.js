@@ -3,7 +3,8 @@ import bcrypt from "bcrypt";
 import { pool } from "@/lib/db"; // a pg.pool object
 
 export async function POST(req) {
-	const { username, rhythm } = await req.json();
+	var { username, rhythm } = await req.json();
+	rhythm = rhythm.replace(/[^TGL]/g, "");
 
 	if (!rhythm || rhythm.trim() === "") {
 		return NextResponse.json(
@@ -18,6 +19,7 @@ export async function POST(req) {
 			{ status: 400 }
 		);
 	}
+
 
 	const hashedRhythm = await bcrypt.hash(rhythm, 10);
 
