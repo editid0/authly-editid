@@ -32,8 +32,8 @@ export default function TasksList({ tasks }) {
 					? "pending"
 					: "completed"
 				: checked
-				? "completed"
-				: "pending";
+					? "completed"
+					: "pending";
 
 		setTaskList((prev) =>
 			prev.map((task) =>
@@ -112,6 +112,9 @@ export default function TasksList({ tasks }) {
 								{moment(task.created_at).format(
 									"MMMM Do YYYY, h:mm:ss a"
 								)}
+							</p>
+							<p className="text-sm text-muted-foreground/80">
+								Priority: {task.priority}
 							</p>
 						</div>
 						<div className="right-0 ml-auto">

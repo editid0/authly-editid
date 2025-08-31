@@ -6,7 +6,7 @@ import { pool } from "@/lib/db";
 export async function POST(req) {
 	const cookieStore = await cookies();
 	const auth = cookieStore.get("auth")?.value;
-	const { title, description } = await req.json();
+	const { title, description, priority } = await req.json();
 
 	if (!auth) {
 		return NextResponse.json({ error: "No auth token" }, { status: 401 });
@@ -35,10 +35,28 @@ export async function POST(req) {
 			{ status: 400 }
 		);
 	}
+	if (isNaN(priority)) {
+		return NextResponse.json(
+			{ error: "Priority must be a number" },
+			{ status: 400 }
+		);
+	}
+	if (Number(priority) > 5) {
+		return NextResponse.json(
+			{ error: "Priority must be between 0 and 5" },
+			{ status: 400 }
+		);
+	}
+	if (Number(priority) < 0) {
+		return NextResponse.json(
+			{ error: "Priority must be between 0 and 5" },
+			{ status: 400 }
+		);
+	}
 	const userId = payload.userId;
 	await pool.query(
-		"INSERT INTO tasks (title, user_id, description) VALUES ($1, $2, $3)",
-		[title, userId, description]
+		"INSERT INTO tasks (title, user_id, description, priority) VALUES ($1, $2, $3, $4)",
+		[title, userId, description, priority]
 	);
 	return NextResponse.json({ success: true });
 }

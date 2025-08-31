@@ -12,7 +12,7 @@ export default async function ProtectedPage() {
 	const userId = decoded.userId;
 
 	const tasks_raw = await pool.query(
-		"SELECT * FROM tasks WHERE user_id = $1 ORDER BY created_at DESC",
+		"SELECT * FROM tasks WHERE user_id = $1 ORDER BY priority DESC",
 		[userId]
 	);
 	const tasks = tasks_raw.rows;

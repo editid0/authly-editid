@@ -10,12 +10,13 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function AddTask() {
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
+	const [priority, setPriority] = useState("");
 	const [open, setOpen] = useState(false);
 
 	function addTask() {
@@ -24,16 +25,31 @@ export default function AddTask() {
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ title, description }),
+			body: JSON.stringify({ title, description, priority }),
 		}).then((res) => {
 			if (res.ok) {
 				setOpen(false);
 				setTitle("");
 				setDescription("");
+				setPriority("");
 				window.location.reload();
 			}
 		});
 	}
+
+	useEffect(() => {
+		if (isNaN(priority)) {
+			setPriority("");
+		} else {
+			if (Number(priority) > 5) {
+				setPriority("5");
+			}
+			if (Number(priority) < 0) {
+				setPriority("0");
+			}
+		}
+	}, [priority]);
+
 	return (
 		<>
 			<Dialog open={open} onOpenChange={setOpen}>
@@ -60,6 +76,11 @@ export default function AddTask() {
 						placeholder="Task description"
 						value={description}
 						onChange={(e) => setDescription(e.target.value)}
+					/>
+					<Input
+						placeholder="Task priority (0-5, 5 is most important)"
+						value={priority}
+						onChange={(e) => setPriority(e.target.value)}
 					/>
 					<Button className="mt-4 w-full" onClick={() => addTask()}>
 						Add Task
