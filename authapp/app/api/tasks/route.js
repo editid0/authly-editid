@@ -22,6 +22,19 @@ export async function POST(req) {
 			{ status: 401 }
 		);
 	}
+
+	if (!title || title.trim() === "") {
+		return NextResponse.json(
+			{ error: "Title is required" },
+			{ status: 400 }
+		);
+	}
+	if (title.length > 255) {
+		return NextResponse.json(
+			{ error: "Title must be less than 255 characters" },
+			{ status: 400 }
+		);
+	}
 	const userId = payload.userId;
 	await pool.query(
 		"INSERT INTO tasks (title, user_id, description) VALUES ($1, $2, $3)",

@@ -5,6 +5,20 @@ import { pool } from "@/lib/db"; // a pg.pool object
 export async function POST(req) {
 	const { username, rhythm } = await req.json();
 
+	if (!rhythm || rhythm.trim() === "") {
+		return NextResponse.json(
+			{ error: "Rhythm is required" },
+			{ status: 400 }
+		);
+	}
+
+	if (rhythm.length > 30) {
+		return NextResponse.json(
+			{ error: "Rhythm must be less than 30 characters" },
+			{ status: 400 }
+		);
+	}
+
 	const hashedRhythm = await bcrypt.hash(rhythm, 10);
 
 	var exists = await pool.query("SELECT * FROM users WHERE username = $1", [

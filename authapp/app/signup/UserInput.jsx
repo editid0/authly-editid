@@ -55,8 +55,18 @@ export default function SignUpUserInput() {
 		}
 	}, [pressed]);
 
+	useEffect(() => {
+		if (rhythm.length > 30) {
+			console.log("Rhythm is too long:", rhythm);
+		}
+	}, [rhythm]);
+
 	function submitSignup() {
-		console.log("Submitting signup");
+		if (rhythm.length > 30) {
+			//check length
+			alert("Rhythm is too long. Please shorten it.");
+			return;
+		}
 		fetch("/api/signup", {
 			method: "POST",
 			headers: {
