@@ -13,7 +13,7 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 function formatRhythm(rhythm) {
 	const meanings = {
@@ -100,6 +100,7 @@ export default function SignInUserInput() {
 			if (data.success) {
 				// Use client navigation for mobile compatibility
 				router.push("/app");
+				redirect("/app");
 			} else {
 				throw new Error(data.error || "Invalid credentials");
 			}
