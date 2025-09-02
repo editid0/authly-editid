@@ -100,7 +100,6 @@ export default function SignInUserInput() {
 			if (data.success) {
 				// Use client navigation for mobile compatibility
 				router.push("/app");
-				redirect("/app");
 			} else {
 				throw new Error(data.error || "Invalid credentials");
 			}
